@@ -60,10 +60,14 @@ class AuthController extends Controller
     }
 
     public function logout(Request $request)
-    {
-        Auth::logout();
+{
+    Auth::logout();
+
+    if ($request->hasSession()) {
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/');
     }
+
+    return redirect('/')->withCookie(cookie()->forget('laravel_session'));
+}
 }

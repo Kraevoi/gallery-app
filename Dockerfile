@@ -1,6 +1,6 @@
 FROM php:8.2-fpm-alpine
 
-# Устанавливаем системные зависимости (добавлен libzip-dev для расширения zip)
+# Устанавливаем системные зависимости
 RUN apk add --no-cache \
     nginx \
     supervisor \
@@ -20,14 +20,16 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www
 COPY . .
 
-# Устанавливаем зависимости Laravel (без dev, для продакшена)
+# Устанавливаем зависимости Laravel (без dev)
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Права на storage и cache
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
-
-# Очищаем кеш конфигов при сборке
-RUN php artisan config:clear && php artisan route:clear && php artisan view:clear
+# Создаем директории и даем права
+RUN mkdir -p /var/www/storage/framework/sessions \
+    && mkdir -p /var/www/storage/framework/views \
+    && mkdir -p /var/www/storage/framework/cache \
+    && mkdir -p /var/www/storage/logs \
+    && chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
 # Копируем конфиги nginx и supervisor
 COPY docker/nginx.conf /etc/nginx/nginx.conf
