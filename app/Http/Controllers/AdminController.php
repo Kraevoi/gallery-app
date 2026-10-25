@@ -12,18 +12,13 @@ class AdminController extends Controller
 {
     // Секретный маршрут для создания первого админа
     public function setup()
-    {
-        if (User::where('is_admin', true)->exists()) {
-            abort(404);
-        }
-        return view('admin.setup');
-    }
+{
+    return view('admin.setup');
+}
 
     public function createAdmin(Request $request)
     {
-        if (User::where('is_admin', true)->exists()) {
-            abort(404);
-        }
+        
 
         $request->validate([
             'name' => 'required|string|max:255',
