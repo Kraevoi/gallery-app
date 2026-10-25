@@ -27,7 +27,7 @@ class PhotoController extends Controller
         $file = $request->file('image');
         
         // Конвертируем в base64
-        $base64Data = base64_encode(file_get_contents($file->getRealPath()));
+        $base64Data = base64_encode($file->get());
         $mimeType = $file->getMimeType();
 
         Photo::create([
