@@ -9,4 +9,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Ping Render
-        run: curl -s -o /dev/null -w "%{http_code}" https://your-app.onrender.com
+        run: curl -s -o /dev/null -w "%{http_code}" https://gallery-app-bmbt.onrender.com
