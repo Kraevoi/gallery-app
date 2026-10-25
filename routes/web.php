@@ -9,6 +9,13 @@ use App\Http\Controllers\PhotoController;
 
 Route::get('/', [GalleryController::class, 'index'])->name('gallery.index');
 Route::get('/albums/{slug}', [GalleryController::class, 'album'])->name('gallery.album');
+
+// Маршруты для загрузки фото должны идти ДО маршрута с {id}
+Route::middleware(['auth', 'blocked'])->group(function () {
+    Route::get('/photos/upload', [PhotoController::class, 'create'])->name('photos.create');
+    Route::post('/photos/upload', [PhotoController::class, 'store'])->name('photos.store');
+});
+
 Route::get('/photos/{id}', [GalleryController::class, 'show'])->name('gallery.show');
 Route::post('/photos/{id}/report', [ReportController::class, 'store'])->middleware('auth')->name('report.store');
 
@@ -18,11 +25,6 @@ Route::get('/register', [AuthController::class, 'showRegister'])->name('register
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::middleware(['auth', 'blocked'])->group(function () {
-    Route::get('/photos/upload', [PhotoController::class, 'create'])->name('photos.create');
-    Route::post('/photos/upload', [PhotoController::class, 'store'])->name('photos.store');
-});
-
 Route::get('/secret-admin-setup', [AdminController::class, 'setup'])->name('admin.setup');
 Route::post('/secret-admin-setup', [AdminController::class, 'createAdmin'])->name('admin.setup.post');
 
@@ -31,8 +33,4 @@ Route::middleware(['auth', 'admin', 'blocked'])->prefix('admin')->group(function
     Route::post('/photos/{id}/approve', [AdminController::class, 'approve'])->name('admin.approve');
     Route::post('/photos/{id}/reject', [AdminController::class, 'reject'])->name('admin.reject');
     Route::post('/users/{id}/block', [AdminController::class, 'blockUser'])->name('admin.block');
-});
-Route::get('/force-clear-db', function() {
-    \App\Models\User::truncate();
-    return 'Все пользователи удалены. Теперь можно зайти на /secret-admin-setup';
 });
