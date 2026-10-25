@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
+    // Секретный маршрут для создания первого админа
     public function setup()
     {
         if (User::where('is_admin', true)->exists()) {
@@ -45,6 +46,7 @@ class AdminController extends Controller
         return redirect()->route('login')->with('success', 'Администратор создан. Войдите в систему.');
     }
 
+    // Главная страница админки
     public function index()
     {
         $pendingPhotos = Photo::where('is_approved', false)->with('user', 'album')->latest()->get();
