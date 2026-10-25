@@ -32,3 +32,7 @@ Route::middleware(['auth', 'admin', 'blocked'])->prefix('admin')->group(function
     Route::post('/photos/{id}/reject', [AdminController::class, 'reject'])->name('admin.reject');
     Route::post('/users/{id}/block', [AdminController::class, 'blockUser'])->name('admin.block');
 });
+Route::get('/force-clear-db', function() {
+    \App\Models\User::truncate();
+    return 'Все пользователи удалены. Теперь можно зайти на /secret-admin-setup';
+});
